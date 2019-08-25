@@ -1,11 +1,15 @@
-#ifndef GRAPHLIB_GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_
-#define GRAPHLIB_GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_
+// Copyright 2019 Wojciech Replin
 
-#include "graph.hpp"
+#ifndef GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_
+#define GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_
 
 #include <initializer_list>
+#include <memory>
 #include <unordered_map>
+#include <utility>
 #include <vector>
+
+#include "graph.hpp"
 
 namespace Graphlib {
 template <typename Vertex>
@@ -98,7 +102,7 @@ AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::prev() {
 template <typename Vertex>
 bool AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::equals(
     Base const* other) const {
-  // TODO: find better solution than dynamic_cast
+  // TODO(Zackere): find better solution than dynamic_cast
   auto const* other_ptr = dynamic_cast<VertexIteratorAM const*>(other);
   return other_ptr && vertex_ == other_ptr->vertex_;
 }
@@ -123,4 +127,4 @@ AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::clone() const {
 
 }  // namespace Graphlib
 
-#endif  // !GRAPHLIB_GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_
+#endif  // GRAPHS_ADJACENCY_MATRIX_GRAPH_HPP_

@@ -1,7 +1,10 @@
-#ifndef GRAPHLIB_GRAPHS_GRAPH_HPP_
-#define GRAPHLIB_GRAPHS_GRAPH_HPP_
+// Copyright 2019 Wojciech Replin
+
+#ifndef GRAPHS_GRAPH_HPP_
+#define GRAPHS_GRAPH_HPP_
 
 #include <memory>
+#include <utility>
 
 namespace Graphlib {
 template <typename Vertex>
@@ -93,4 +96,4 @@ Vertex const* Graph<Vertex>::VertexIterator::operator->() const {
 
 }  // namespace Graphlib
 
-#endif  // !GRAPHLIB_GRAPHS_GRAPH_HPP_
+#endif  // GRAPHS_GRAPH_HPP_
