@@ -14,6 +14,8 @@ class AdjacencyMatrixGraph : public Graph<Vertex> {
   AdjacencyMatrixGraph(bool directed,
                        std::initializer_list<Vertex> const& verticies);
 
+  // Overridden from Graph
+  ~AdjacencyMatrixGraph() override = default;
   typename Graph<Vertex>::VertexIterator Vbegin() const override;
   typename Graph<Vertex>::VertexIterator Vend() const override;
 
@@ -24,15 +26,16 @@ class AdjacencyMatrixGraph : public Graph<Vertex> {
     using iterator_type =
         typename std::unordered_map<std::size_t, Vertex>::const_iterator;
 
-    explicit VertexIteratorAM(
-        typename std::unordered_map<std::size_t, Vertex>::const_iterator
-            vertex);
+    explicit VertexIteratorAM(iterator_type vertex);
+    ~VertexIteratorAM() override = default;
 
-    Base const* next();
-    Base const* prev();
-    bool equals(Base const* other) const;
-    Vertex const& operator*() const;
-    Vertex const* operator->() const;
+    // Overridden from VertexIteratorBase
+    Base const* next() override;
+    Base const* prev() override;
+    bool equals(Base const* other) const override;
+    Vertex const& operator*() const override;
+    Vertex const* operator->() const override;
+    std::unique_ptr<Base> clone() const override;
 
    private:
     iterator_type vertex_;
@@ -46,7 +49,7 @@ class AdjacencyMatrixGraph : public Graph<Vertex> {
 };
 
 template <typename Vertex>
-inline AdjacencyMatrixGraph<Vertex>::AdjacencyMatrixGraph(
+AdjacencyMatrixGraph<Vertex>::AdjacencyMatrixGraph(
     bool directed,
     std::initializer_list<Vertex> const& verticies)
     : directed_(directed) {
@@ -63,19 +66,19 @@ template <typename Vertex>
 typename Graph<Vertex>::VertexIterator AdjacencyMatrixGraph<Vertex>::Vbegin()
     const {
   return Graph<Vertex>::VertexIterator(
-      std::make_shared<VertexIteratorAM>(verticies_.cbegin()));
+      std::make_unique<VertexIteratorAM>(verticies_.cbegin()));
 }
 
 template <typename Vertex>
 typename Graph<Vertex>::VertexIterator AdjacencyMatrixGraph<Vertex>::Vend()
     const {
   return Graph<Vertex>::VertexIterator(
-      std::make_shared<VertexIteratorAM>(verticies_.cend()));
+      std::make_unique<VertexIteratorAM>(verticies_.cend()));
 }
 
 template <typename Vertex>
 AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::VertexIteratorAM(
-    typename std::unordered_map<std::size_t, Vertex>::const_iterator vertex)
+    iterator_type vertex)
     : vertex_(vertex) {}
 
 template <typename Vertex>
@@ -110,6 +113,12 @@ template <typename Vertex>
 Vertex const* AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::operator->()
     const {
   return &vertex_->second;
+}
+
+template <typename Vertex>
+std::unique_ptr<typename AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::Base>
+AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::clone() const {
+  return std::make_unique<VertexIteratorAM>(vertex_);
 }
 
 }  // namespace Graphlib

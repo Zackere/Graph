@@ -14,7 +14,8 @@ class Graph {
   class VertexIterator {
    public:
     explicit VertexIterator(
-        std::shared_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator);
+        std::unique_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator);
+    VertexIterator(VertexIterator const& other);
 
     VertexIterator& operator++();
     VertexIterator& operator--();
@@ -24,26 +25,35 @@ class Graph {
     Vertex const* operator->() const;
 
    private:
-    std::shared_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator_;
+    std::unique_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator_;
   };
+
+  virtual ~Graph() = default;
+
   virtual VertexIterator Vbegin() const = 0;
   virtual VertexIterator Vend() const = 0;
 
  protected:
   class VertexIteratorBase {
    public:
+    virtual ~VertexIteratorBase() = default;
     virtual VertexIteratorBase const* next() = 0;
     virtual VertexIteratorBase const* prev() = 0;
     virtual bool equals(VertexIteratorBase const* other) const = 0;
     virtual Vertex const& operator*() const = 0;
     virtual Vertex const* operator->() const = 0;
+    virtual std::unique_ptr<VertexIteratorBase> clone() const = 0;
   };
 };
 
 template <typename Vertex>
 Graph<Vertex>::VertexIterator::VertexIterator(
-    std::shared_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator)
+    std::unique_ptr<typename Graph<Vertex>::VertexIteratorBase> iterator)
     : iterator_(std::move(iterator)) {}
+
+template <typename Vertex>
+Graph<Vertex>::VertexIterator::VertexIterator(VertexIterator const& other)
+    : iterator_(other.iterator_->clone()) {}
 
 template <typename Vertex>
 typename Graph<Vertex>::VertexIterator& Graph<Vertex>::VertexIterator::
