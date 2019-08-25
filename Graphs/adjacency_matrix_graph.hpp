@@ -18,21 +18,24 @@ class AdjacencyMatrixGraph : public Graph<Vertex> {
   typename Graph<Vertex>::VertexIterator Vend() const override;
 
  private:
-  template <typename ConstIterator>
   class VertexIteratorAM : public Graph<Vertex>::VertexIteratorBase {
    public:
     using Base = typename Graph<Vertex>::VertexIteratorBase;
+    using iterator_type =
+        typename std::unordered_map<std::size_t, Vertex>::const_iterator;
 
-    explicit VertexIteratorAM(ConstIterator vertex);
+    explicit VertexIteratorAM(
+        typename std::unordered_map<std::size_t, Vertex>::const_iterator
+            vertex);
 
-    typename Graph<Vertex>::VertexIteratorBase const* next();
-    typename Graph<Vertex>::VertexIteratorBase const* prev();
+    Base const* next();
+    Base const* prev();
     bool equals(Base const* other) const;
     Vertex const& operator*() const;
     Vertex const* operator->() const;
 
    private:
-    ConstIterator vertex_;
+    iterator_type vertex_;
   };
 
  private:
@@ -60,45 +63,37 @@ template <typename Vertex>
 typename Graph<Vertex>::VertexIterator AdjacencyMatrixGraph<Vertex>::Vbegin()
     const {
   return Graph<Vertex>::VertexIterator(
-      std::make_shared<
-          VertexIteratorAM<typename decltype(verticies_)::const_iterator>>(
-          verticies_.cbegin()));
+      std::make_shared<VertexIteratorAM>(verticies_.cbegin()));
 }
 
 template <typename Vertex>
 typename Graph<Vertex>::VertexIterator AdjacencyMatrixGraph<Vertex>::Vend()
     const {
   return Graph<Vertex>::VertexIterator(
-      std::make_shared<
-          VertexIteratorAM<typename decltype(verticies_)::const_iterator>>(
-          verticies_.cend()));
+      std::make_shared<VertexIteratorAM>(verticies_.cend()));
 }
 
 template <typename Vertex>
-template <typename ConstIterator>
-AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::VertexIteratorAM(
-    ConstIterator vertex)
+AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::VertexIteratorAM(
+    typename std::unordered_map<std::size_t, Vertex>::const_iterator vertex)
     : vertex_(vertex) {}
 
 template <typename Vertex>
-template <typename ConstIterator>
-typename Graph<Vertex>::VertexIteratorBase const*
-AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::next() {
+typename AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::Base const*
+AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::next() {
   ++vertex_;
   return this;
 }
 
 template <typename Vertex>
-template <typename ConstIterator>
-typename Graph<Vertex>::VertexIteratorBase const*
-AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::prev() {
+typename AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::Base const*
+AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::prev() {
   --vertex_;
   return this;
 }
 
 template <typename Vertex>
-template <typename ConstIterator>
-bool AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::equals(
+bool AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::equals(
     Base const* other) const {
   // TODO: find better solution than dynamic_cast
   auto const* other_ptr = dynamic_cast<VertexIteratorAM const*>(other);
@@ -106,16 +101,14 @@ bool AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::equals(
 }
 
 template <typename Vertex>
-template <typename ConstIterator>
-Vertex const& AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::
-operator*() const {
+Vertex const& AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::operator*()
+    const {
   return vertex_->second;
 }
 
 template <typename Vertex>
-template <typename ConstIterator>
-Vertex const* AdjacencyMatrixGraph<Vertex>::VertexIteratorAM<ConstIterator>::
-operator->() const {
+Vertex const* AdjacencyMatrixGraph<Vertex>::VertexIteratorAM::operator->()
+    const {
   return &vertex_->second;
 }
 
