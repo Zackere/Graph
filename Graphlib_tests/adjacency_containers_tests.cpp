@@ -1,13 +1,13 @@
 // Copyright 2019 Wojciech Replin
 
-#include "../AdjacencyLists/adjacency_vector.hpp"
-
 #include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
 #include <gtest/gtest.h>
+
+#include "../AdjacencyLists/adjacency_vector.hpp"
 
 namespace {
 struct TestParams {
