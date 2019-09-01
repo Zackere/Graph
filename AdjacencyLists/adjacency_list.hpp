@@ -94,9 +94,8 @@ AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
 inline typename Edge<int>::Weight const&
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                        int>::operator[](int key) const {
-  auto it = std::find_if(list_.begin(), list_.end(),
-                         [key](auto const& pair) { return pair.first == key; });
-  return it == list_.end() ? 0.0f : it->second;
+  return std::find_if(list_.begin(), list_.end(),
+                       [key](auto const& pair) { return pair.first == key; })->second;
 }
 
 typename Edge<int>::Weight&
@@ -161,7 +160,7 @@ AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
 
 inline std::pair<int, typename Edge<int>::Weight&>
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                   int>::iterator::operator*() {
+                       int>::iterator::operator*() {
   if (current_ == list_->end())
     throw std::out_of_range("End iterator is not dereferencable");
   return {current_->first, current_->second};
