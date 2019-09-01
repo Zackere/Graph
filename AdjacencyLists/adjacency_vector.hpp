@@ -5,10 +5,10 @@
 
 #include <algorithm>
 #include <iterator>
-#include <stdexcept>
 #include <utility>
 #include <vector>
 
+#include "../edge.hpp"
 #include "adjacency_container.hpp"
 
 namespace Graphlib {
@@ -29,9 +29,10 @@ class AdjacencyContainer<
     friend class AdjacencyContainer<
         std::vector<std::pair<bool, typename Edge<int>::Weight>>,
         int>;
-    iterator(int index, std::vector<std::pair<bool, double>>* data);
+    iterator(int index,
+             std::vector<std::pair<bool, typename Edge<int>::Weight>>* data);
     int index_ = 0;
-    std::vector<std::pair<bool, double>>* const data_;
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>* const data_;
   };
 
   explicit AdjacencyContainer(std::size_t size);
@@ -45,8 +46,9 @@ class AdjacencyContainer<
   iterator end();
 
  private:
-  void CheckRange(int key) const;
-  std::vector<std::pair<bool, double>> vector_;
+  bool InRange(int key) const;
+  std::vector<std::pair<bool, typename Edge<int>::Weight>> vector_;
+  std::size_t nelems_ = 0;
 };
 
 using AdjacencyVector =
@@ -61,40 +63,38 @@ inline AdjacencyContainer<
 inline std::size_t
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::size() const {
-  return vector_.size();
+  return nelems_;
 }
 
 inline bool
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::insert(int key, typename Edge<int>::Weight value) {
-  CheckRange(key);
-  if (vector_[key].first)
+  if (!InRange(key) || vector_[key].first)
     return false;
   vector_[key] = std::make_pair(true, value);
+  ++nelems_;
   return true;
 }
 
 inline bool
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::remove(int key) {
-  CheckRange(key);
-  if (!vector_[key].first)
+  if (!InRange(key) || !vector_[key].first)
     return false;
   vector_[key].first = false;
+  --nelems_;
   return true;
 }
 
 inline bool
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::exist(int key) const {
-  CheckRange(key);
-  return vector_[key].first;
+  return InRange(key) && vector_[key].first;
 }
 
 inline typename Edge<int>::Weight const&
     AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                        int>::operator[](int key) const {
-  CheckRange(key);
   return vector_[key].second;
 }
 
@@ -115,7 +115,7 @@ inline AdjacencyContainer<
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::begin() {
   return vector_.size() && !vector_[0].first ? ++iterator(0, &vector_)
-                                              : iterator(0, &vector_);
+                                             : iterator(0, &vector_);
 }
 
 inline AdjacencyContainer<
@@ -126,11 +126,10 @@ AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
   return iterator(vector_.size(), &vector_);
 }
 
-inline void
+inline bool
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
-                   int>::CheckRange(int key) const {
-  if (key < 0 || key >= vector_.size())
-    throw std::out_of_range("Index is out of vectors' range");
+                   int>::InRange(int key) const {
+  return key >= 0 && key < vector_.size();
 }
 
 inline AdjacencyContainer<
