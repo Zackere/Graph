@@ -17,6 +17,23 @@ class AdjacencyContainer<
     std::vector<std::pair<bool, typename Edge<int>::Weight>>,
     int> {
  public:
+  class iterator {
+   public:
+    iterator& operator++();
+    iterator& operator--();
+    bool operator==(iterator const& other) const;
+    bool operator!=(iterator const& other) const;
+    std::pair<int, typename Edge<int>::Weight&> operator*();
+
+   private:
+    friend class AdjacencyContainer<
+        std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+        int>;
+    iterator(int index, std::vector<std::pair<bool, double>>* data);
+    int index_ = 0;
+    std::vector<std::pair<bool, double>>* const data_;
+  };
+
   explicit AdjacencyContainer(std::size_t size);
   std::size_t size() const;
   bool insert(int key, typename Edge<int>::Weight value);
@@ -24,6 +41,8 @@ class AdjacencyContainer<
   bool exist(int key) const;
   typename Edge<int>::Weight const& operator[](int key) const;
   typename Edge<int>::Weight& operator[](int key);
+  iterator begin();
+  iterator end();
 
  private:
   void CheckRange(int key) const;
@@ -90,11 +109,80 @@ inline typename Edge<int>::Weight&
           operator[](key));
 }
 
+inline AdjacencyContainer<
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+    int>::iterator
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::begin() {
+  return vector_.size() && !vector_[0].first ? ++iterator(0, &vector_)
+                                              : iterator(0, &vector_);
+}
+
+inline AdjacencyContainer<
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+    int>::iterator
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::end() {
+  return iterator(vector_.size(), &vector_);
+}
+
 inline void
 AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
                    int>::CheckRange(int key) const {
   if (key < 0 || key >= vector_.size())
     throw std::out_of_range("Index is out of vectors' range");
+}
+
+inline AdjacencyContainer<
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+    int>::iterator::iterator(int index,
+                             std::vector<std::pair<bool, double>>* data)
+    : index_(index), data_(data) {}
+
+inline AdjacencyContainer<
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+    int>::iterator&
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::iterator::operator++() {
+  if (index_ >= data_->size())
+    return *this;
+  do {
+    ++index_;
+  } while (index_ < data_->size() && !data_->at(index_).first);
+  return *this;
+}
+
+inline AdjacencyContainer<
+    std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+    int>::iterator&
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::iterator::operator--() {
+  int seeker = index_ - 1;
+  while (seeker >= 0 && !data_->at(seeker).first)
+    --seeker;
+  if (seeker >= 0)
+    index_ = seeker;
+  return *this;
+}
+
+inline bool
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::iterator::operator==(iterator const& other) const {
+  return index_ == other.index_ && data_ == other.data_;
+}
+
+inline bool
+AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                   int>::iterator::operator!=(iterator const& other) const {
+  return !(*this == other);
+}
+
+inline std::pair<int, typename Edge<int>::Weight&>
+    AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                       int>::iterator::operator*() {
+  if (this->index_ == data_->size())
+    throw std::out_of_range("End iterator is not dereferencable");
+  return {index_, data_->at(index_).second};
 }
 }  // namespace Graphlib
 #endif  // ADJACENCYLISTS_ADJACENCY_VECTOR_HPP_
