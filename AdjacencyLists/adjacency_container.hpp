@@ -3,6 +3,7 @@
 #ifndef ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 #define ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -19,6 +20,7 @@ class AdjacencyContainer {
     bool operator==(iterator const& other) const;
     bool operator!=(iterator const& other) const;
     std::pair<Vertex, typename Edge<Vertex>::Weight&> operator*();
+    std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
   };
   explicit AdjacencyContainer(std::size_t size);
   std::size_t size() const;

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -24,6 +25,7 @@ class AdjacencyContainer<
     bool operator==(iterator const& other) const;
     bool operator!=(iterator const& other) const;
     std::pair<int, typename Edge<int>::Weight&> operator*();
+    std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
 
    private:
     friend class AdjacencyContainer<
@@ -182,6 +184,13 @@ inline std::pair<int, typename Edge<int>::Weight&>
   if (this->index_ == data_->size())
     throw std::out_of_range("End iterator is not dereferencable");
   return {index_, data_->at(index_).second};
+}
+
+inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
+    AdjacencyContainer<std::vector<std::pair<bool, typename Edge<int>::Weight>>,
+                       int>::iterator::operator->() {
+  return std::make_unique<std::pair<int, typename Edge<int>::Weight&>>(
+      operator*());
 }
 }  // namespace Graphlib
 #endif  // ADJACENCYLISTS_ADJACENCY_VECTOR_HPP_

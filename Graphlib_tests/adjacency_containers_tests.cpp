@@ -63,6 +63,7 @@ TYPED_TEST(ContructorTestFixture, ResultOK) {
   for (std::size_t elem : this->okvalues) {
     std::unique_ptr<TypeParam> p;
     ASSERT_NO_THROW(p = std::make_unique<TypeParam>(elem));
+    ASSERT_NE(p, nullptr);
     EXPECT_EQ(p->size(), 0u);
   }
 }
@@ -123,8 +124,8 @@ TYPED_TEST(IteratorTestsFixture, CheckAllIterators) {
          ++container_it)
       EXPECT_NE(std::find_if(param.second.begin(), param.second.end(),
                              [&container_it](auto const& pair) {
-                               return (*container_it).first == pair.first &&
-                                      (*container_it).second == pair.second;
+                               return container_it->first == pair.first &&
+                                      container_it->second == pair.second;
                              }),
                 param.second.end());
   }

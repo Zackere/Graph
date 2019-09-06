@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <list>
+#include <memory>
 #include <utility>
 
 #include "../edge.hpp"
@@ -23,6 +24,7 @@ class AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
     bool operator==(iterator const& other) const;
     bool operator!=(iterator const& other) const;
     std::pair<int, typename Edge<int>::Weight&> operator*();
+    std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
 
    private:
     friend class AdjacencyContainer<
@@ -95,7 +97,8 @@ inline typename Edge<int>::Weight const&
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                        int>::operator[](int key) const {
   return std::find_if(list_.begin(), list_.end(),
-                       [key](auto const& pair) { return pair.first == key; })->second;
+                      [key](auto const& pair) { return pair.first == key; })
+      ->second;
 }
 
 typename Edge<int>::Weight&
@@ -164,6 +167,13 @@ inline std::pair<int, typename Edge<int>::Weight&>
   if (current_ == list_->end())
     throw std::out_of_range("End iterator is not dereferencable");
   return {current_->first, current_->second};
+}
+
+inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
+    AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
+                       int>::iterator::operator->() {
+  return std::make_unique<std::pair<int, typename Edge<int>::Weight&>>(
+      operator*());
 }
 
 }  // namespace Graphlib
