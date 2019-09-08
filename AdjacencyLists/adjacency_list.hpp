@@ -4,7 +4,6 @@
 #define ADJACENCYLISTS_ADJACENCY_LIST_HPP_
 
 #include <algorithm>
-#include <iterator>
 #include <list>
 #include <memory>
 #include <utility>
@@ -17,12 +16,12 @@ template <>
 class AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                          int> {
  public:
-  class iterator {
+  class Iterator {
    public:
-    iterator& operator++();
-    iterator& operator--();
-    bool operator==(iterator const& other) const;
-    bool operator!=(iterator const& other) const;
+    Iterator& operator++();
+    Iterator& operator--();
+    bool operator==(Iterator const& other) const;
+    bool operator!=(Iterator const& other) const;
     std::pair<int, typename Edge<int>::Weight&> operator*();
     std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
 
@@ -30,7 +29,7 @@ class AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
     friend class AdjacencyContainer<
         std::list<std::pair<int, typename Edge<int>::Weight>>,
         int>;
-    iterator(
+    Iterator(
         std::list<std::pair<int, typename Edge<int>::Weight>>::iterator iter,
         std::list<std::pair<int, typename Edge<int>::Weight>>* list);
     std::list<std::pair<int, typename Edge<int>::Weight>>::iterator current_;
@@ -44,8 +43,8 @@ class AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
   bool exist(int key) const;
   typename Edge<int>::Weight const& operator[](int key) const;
   typename Edge<int>::Weight& operator[](int key);
-  iterator begin();
-  iterator end();
+  Iterator begin();
+  Iterator end();
 
  private:
   std::list<std::pair<int, typename Edge<int>::Weight>> list_;
@@ -111,39 +110,39 @@ typename Edge<int>::Weight&
 }
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                          int>::iterator
+                          int>::Iterator
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                    int>::begin() {
-  return iterator(list_.begin(), &list_);
+  return Iterator(list_.begin(), &list_);
 }
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                          int>::iterator
+                          int>::Iterator
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                    int>::end() {
-  return iterator(list_.end(), &list_);
+  return Iterator(list_.end(), &list_);
 }
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                          int>::iterator::
-    iterator(
+                          int>::Iterator::
+    Iterator(
         std::list<std::pair<int, typename Edge<int>::Weight>>::iterator iter,
         std::list<std::pair<int, typename Edge<int>::Weight>>* list)
     : current_(iter), list_(list) {}
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                          int>::iterator&
+                          int>::Iterator&
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                   int>::iterator::operator++() {
+                   int>::Iterator::operator++() {
   if (current_ != list_->end())
     ++current_;
   return *this;
 }
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                          int>::iterator&
+                          int>::Iterator&
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                   int>::iterator::operator--() {
+                   int>::Iterator::operator--() {
   if (current_ != list_->begin())
     --current_;
   return *this;
@@ -151,27 +150,27 @@ AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
 
 inline bool
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                   int>::iterator::operator==(iterator const& other) const {
+                   int>::Iterator::operator==(Iterator const& other) const {
   return current_ == other.current_ && list_ == other.list_;
 }
 
 inline bool
 AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                   int>::iterator::operator!=(iterator const& other) const {
+                   int>::Iterator::operator!=(Iterator const& other) const {
   return !(*this == other);
 }
 
 inline std::pair<int, typename Edge<int>::Weight&>
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                       int>::iterator::operator*() {
+                       int>::Iterator::operator*() {
   if (current_ == list_->end())
-    throw std::out_of_range("End iterator is not dereferencable");
+    throw std::out_of_range("End Iterator is not dereferencable");
   return {current_->first, current_->second};
 }
 
 inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
-                       int>::iterator::operator->() {
+                       int>::Iterator::operator->() {
   return std::make_unique<std::pair<int, typename Edge<int>::Weight&>>(
       operator*());
 }

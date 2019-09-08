@@ -13,12 +13,12 @@ namespace Graphlib {
 template <typename Container, typename Vertex, typename Enable = void>
 class AdjacencyContainer {
  public:
-  class iterator {
+  class Iterator {
    public:
-    iterator& operator++();
-    iterator& operator--();
-    bool operator==(iterator const& other) const;
-    bool operator!=(iterator const& other) const;
+    Iterator& operator++();
+    Iterator& operator--();
+    bool operator==(Iterator const& other) const;
+    bool operator!=(Iterator const& other) const;
     std::pair<Vertex, typename Edge<Vertex>::Weight&> operator*();
     std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
   };
@@ -29,8 +29,8 @@ class AdjacencyContainer {
   bool exist(Vertex key) const;
   typename Edge<Vertex>::Weight const& operator[](Vertex key) const;
   typename Edge<Vertex>::Weight& operator[](Vertex key);
-  iterator begin() const;
-  iterator end() const;
+  Iterator begin() const;
+  Iterator end() const;
 };
 }  // namespace Graphlib
 #endif  // ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_

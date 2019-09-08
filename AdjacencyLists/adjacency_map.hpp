@@ -5,7 +5,6 @@
 #define ADJACENCYLISTS_ADJACENCY_MAP_HPP_
 
 #include <algorithm>
-#include <iterator>
 #include <map>
 #include <memory>
 #include <type_traits>
@@ -25,12 +24,12 @@ class AdjacencyContainer<
     int,
     typename std::enable_if<IsMapType<MapType>::value>::type> {
  public:
-  class iterator {
+  class Iterator {
    public:
-    iterator& operator++();
-    iterator& operator--();
-    bool operator==(iterator const& other) const;
-    bool operator!=(iterator const& other) const;
+    Iterator& operator++();
+    Iterator& operator--();
+    bool operator==(Iterator const& other) const;
+    bool operator!=(Iterator const& other) const;
     std::pair<int, typename Edge<int>::Weight&> operator*();
     std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
 
@@ -39,7 +38,7 @@ class AdjacencyContainer<
         MapType,
         int,
         typename std::enable_if<IsMapType<MapType>::value>::type>;
-    iterator(typename MapType::iterator iter, MapType* map);
+    Iterator(typename MapType::iterator iter, MapType* map);
     typename MapType::iterator current_;
     MapType* const map_;
   };
@@ -51,8 +50,8 @@ class AdjacencyContainer<
   bool exist(int key) const;
   typename Edge<int>::Weight const& operator[](int key) const;
   typename Edge<int>::Weight& operator[](int key);
-  iterator begin();
-  iterator end();
+  Iterator begin();
+  Iterator end();
 
  private:
   MapType map_;
@@ -138,36 +137,36 @@ typename Edge<int>::Weight&
 
 template <typename MapType>
 inline
-    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator
+    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator
     AdjacencyContainer<
         MapType,
         int,
         typename std::enable_if<IsMapType<MapType>::value>::type>::begin() {
-  return iterator(map_.begin(), &map_);
+  return Iterator(map_.begin(), &map_);
 }
 
 template <typename MapType>
 inline
-    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator
+    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator
     AdjacencyContainer<
         MapType,
         int,
         typename std::enable_if<IsMapType<MapType>::value>::type>::end() {
-  return iterator(map_.end(), &map_);
+  return Iterator(map_.end(), &map_);
 }
 
 template <typename MapType>
-inline AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
-    iterator(typename MapType::iterator iter, MapType* map)
+inline AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
+    Iterator(typename MapType::iterator iter, MapType* map)
     : current_(iter), map_(map) {}
 
 template <typename MapType>
 inline
-    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator&
+    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator&
     AdjacencyContainer<
         MapType,
         int,
-        typename std::enable_if<IsMapType<MapType>::value>::type>::iterator::
+        typename std::enable_if<IsMapType<MapType>::value>::type>::Iterator::
     operator++() {
   if (current_ != map_->end())
     ++current_;
@@ -176,8 +175,8 @@ inline
 
 template <typename MapType>
 inline
-    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator&
-    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
+    typename AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator&
+    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
     operator--() {
   if (current_ != map_->begin())
     --current_;
@@ -185,29 +184,29 @@ inline
 }
 
 template <typename MapType>
-inline bool AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
-operator==(iterator const& other) const {
+inline bool AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
+operator==(Iterator const& other) const {
   return current_ == other.current_ && map_ == other.map_;
 }
 
 template <typename MapType>
-inline bool AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
-operator!=(iterator const& other) const {
+inline bool AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
+operator!=(Iterator const& other) const {
   return !(*this == other);
 }
 
 template <typename MapType>
 inline std::pair<int, typename Edge<int>::Weight&>
-    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
+    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
     operator*() {
   if (current_ == map_->end())
-    throw std::out_of_range("End iterator is not dereferencable");
+    throw std::out_of_range("End Iterator is not dereferencable");
   return {current_->first, current_->second};
 }
 
 template <typename MapType>
 inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
-    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::iterator::
+    AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::Iterator::
     operator->() {
   return std::make_unique<std::pair<int, typename Edge<int>::Weight&>>(
       operator*());

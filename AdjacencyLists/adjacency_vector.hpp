@@ -4,7 +4,6 @@
 #define ADJACENCYLISTS_ADJACENCY_VECTOR_HPP_
 
 #include <algorithm>
-#include <iterator>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -18,12 +17,12 @@ template <>
 class AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
                          int> {
  public:
-  class iterator {
+  class Iterator {
    public:
-    iterator& operator++();
-    iterator& operator--();
-    bool operator==(iterator const& other) const;
-    bool operator!=(iterator const& other) const;
+    Iterator& operator++();
+    Iterator& operator--();
+    bool operator==(Iterator const& other) const;
+    bool operator!=(Iterator const& other) const;
     std::pair<int, typename Edge<int>::Weight&> operator*();
     std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>> operator->();
 
@@ -31,7 +30,7 @@ class AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
     friend class AdjacencyContainer<
         std::vector<std::optional<typename Edge<int>::Weight>>,
         int>;
-    iterator(int index,
+    Iterator(int index,
              std::vector<std::optional<typename Edge<int>::Weight>>* data);
     int index_ = 0;
     std::vector<std::optional<typename Edge<int>::Weight>>* const data_;
@@ -44,8 +43,8 @@ class AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
   bool exist(int key) const;
   typename Edge<int>::Weight const& operator[](int key) const;
   typename Edge<int>::Weight& operator[](int key);
-  iterator begin();
-  iterator end();
+  Iterator begin();
+  Iterator end();
 
  private:
   bool InRange(int key) const;
@@ -113,19 +112,19 @@ inline typename Edge<int>::Weight&
 
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
-    int>::iterator
+    int>::Iterator
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
                    int>::begin() {
-  return vector_.size() && !vector_[0].has_value() ? ++iterator(0, &vector_)
-                                                   : iterator(0, &vector_);
+  return vector_.size() && !vector_[0].has_value() ? ++Iterator(0, &vector_)
+                                                   : Iterator(0, &vector_);
 }
 
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
-    int>::iterator
+    int>::Iterator
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
                    int>::end() {
-  return iterator(vector_.size(), &vector_);
+  return Iterator(vector_.size(), &vector_);
 }
 
 inline bool
@@ -136,16 +135,16 @@ AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
 
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
-    int>::iterator::
-    iterator(int index,
+    int>::Iterator::
+    Iterator(int index,
              std::vector<std::optional<typename Edge<int>::Weight>>* data)
     : index_(index), data_(data) {}
 
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
-    int>::iterator&
+    int>::Iterator&
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                   int>::iterator::operator++() {
+                   int>::Iterator::operator++() {
   if (index_ >= data_->size())
     return *this;
   do {
@@ -156,9 +155,9 @@ AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
 
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
-    int>::iterator&
+    int>::Iterator&
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                   int>::iterator::operator--() {
+                   int>::Iterator::operator--() {
   int seeker = index_ - 1;
   while (seeker >= 0 && !data_->at(seeker).has_value())
     --seeker;
@@ -169,27 +168,27 @@ AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
 
 inline bool
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                   int>::iterator::operator==(iterator const& other) const {
+                   int>::Iterator::operator==(Iterator const& other) const {
   return index_ == other.index_ && data_ == other.data_;
 }
 
 inline bool
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                   int>::iterator::operator!=(iterator const& other) const {
+                   int>::Iterator::operator!=(Iterator const& other) const {
   return !(*this == other);
 }
 
 inline std::pair<int, typename Edge<int>::Weight&>
     AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                       int>::iterator::operator*() {
+                       int>::Iterator::operator*() {
   if (this->index_ == data_->size())
-    throw std::out_of_range("End iterator is not dereferencable");
+    throw std::out_of_range("End Iterator is not dereferencable");
   return {index_, data_->at(index_).value()};
 }
 
 inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
     AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
-                       int>::iterator::operator->() {
+                       int>::Iterator::operator->() {
   return std::make_unique<std::pair<int, typename Edge<int>::Weight&>>(
       operator*());
 }
