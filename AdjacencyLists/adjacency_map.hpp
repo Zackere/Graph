@@ -1,8 +1,8 @@
 // Copyright 2019 Wojciech Replinstd::unordered_map<int, typename
 // Edge<int>::Weight>
 
-#ifndef ADJACENCYLISTS_ADJACENCY_HASH_TABLE_HPP_
-#define ADJACENCYLISTS_ADJACENCY_HASH_TABLE_HPP_
+#ifndef ADJACENCYLISTS_ADJACENCY_MAP_HPP_
+#define ADJACENCYLISTS_ADJACENCY_MAP_HPP_
 
 #include <algorithm>
 #include <iterator>
@@ -185,4 +185,4 @@ inline std::unique_ptr<std::pair<int, typename Edge<int>::Weight&>>
 }
 
 }  // namespace Graphlib
-#endif  // ADJACENCYLISTS_ADJACENCY_LIST_HPP_
+#endif  // ADJACENCYLISTS_ADJACENCY_MAP_HPP_
