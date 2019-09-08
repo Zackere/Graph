@@ -10,7 +10,7 @@
 #include "../edge.hpp"
 
 namespace Graphlib {
-template <typename Container, typename Vertex>
+template <typename Container, typename Vertex, typename Enable = void>
 class AdjacencyContainer {
  public:
   class iterator {

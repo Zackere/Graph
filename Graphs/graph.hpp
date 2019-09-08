@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "../AdjacencyLists/adjacency_container.hpp"
-#include "../Edge.hpp"
+#include "../edge.hpp"
 
 namespace Graphlib {
 template <typename Container>
