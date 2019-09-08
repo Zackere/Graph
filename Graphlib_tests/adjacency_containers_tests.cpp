@@ -8,8 +8,8 @@
 
 #include "gtest/gtest.h"
 
-#include "../AdjacencyLists/adjacency_hash_table.hpp"
 #include "../AdjacencyLists/adjacency_list.hpp"
+#include "../AdjacencyLists/adjacency_map.hpp"
 #include "../AdjacencyLists/adjacency_vector.hpp"
 
 namespace {
@@ -54,7 +54,8 @@ class IteratorTestsFixture : public testing::Test {
 
 using ContainerTypes = testing::Types<Graphlib::AdjacencyVector,
                                       Graphlib::AdjacencyList,
-                                      Graphlib::AdjacencyHashTable>;
+                                      Graphlib::AdjacencyHashTable,
+                                      Graphlib::AdjacencyAVLTree>;
 TYPED_TEST_CASE(ContructorTestFixture, ContainerTypes);
 TYPED_TEST_CASE(InsertRemoveTestFixture, ContainerTypes);
 TYPED_TEST_CASE(ExistTestFixture, ContainerTypes);
