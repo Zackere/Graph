@@ -8,6 +8,7 @@
 
 #include "gtest/gtest.h"
 
+#include "../AdjacencyLists/adjacency_hash_table.hpp"
 #include "../AdjacencyLists/adjacency_list.hpp"
 #include "../AdjacencyLists/adjacency_vector.hpp"
 
@@ -51,8 +52,9 @@ class IteratorTestsFixture : public testing::Test {
 };
 }  // namespace
 
-using ContainerTypes =
-    testing::Types<Graphlib::AdjacencyVector, Graphlib::AdjacencyList>;
+using ContainerTypes = testing::Types<Graphlib::AdjacencyVector,
+                                      Graphlib::AdjacencyList,
+                                      Graphlib::AdjacencyHashTable>;
 TYPED_TEST_CASE(ContructorTestFixture, ContainerTypes);
 TYPED_TEST_CASE(InsertRemoveTestFixture, ContainerTypes);
 TYPED_TEST_CASE(ExistTestFixture, ContainerTypes);
