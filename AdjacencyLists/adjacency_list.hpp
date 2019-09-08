@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <list>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "../edge.hpp"
@@ -41,8 +42,10 @@ class AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
   bool insert(int key, typename Edge<int>::Weight value);
   bool remove(int key);
   bool exist(int key) const;
-  typename Edge<int>::Weight const& operator[](int key) const;
-  typename Edge<int>::Weight& operator[](int key);
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
+  operator[](int key) const;
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight>> operator[](
+      int key);
   Iterator begin();
   Iterator end();
 
@@ -92,21 +95,24 @@ AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
          }) != list_.end();
 }
 
-inline typename Edge<int>::Weight const&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                        int>::operator[](int key) const {
-  return std::find_if(list_.begin(), list_.end(),
-                      [key](auto const& pair) { return pair.first == key; })
-      ->second;
+  auto it = std::find_if(list_.cbegin(), list_.cend(),
+                         [key](auto const& pair) { return pair.first == key; });
+  if (it != list_.end())
+    return std::ref(it->second);
+  return std::nullopt;
 }
 
-typename Edge<int>::Weight&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight>>
     AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,
                        int>::operator[](int key) {
-  return const_cast<Edge<int>::Weight&>(
-      static_cast<AdjacencyContainer<
-          std::list<std::pair<int, typename Edge<int>::Weight>>, int> const&>(
-          *this)[key]);
+  auto it = std::find_if(list_.begin(), list_.end(),
+                         [key](auto const& pair) { return pair.first == key; });
+  if (it != list_.end())
+    return std::ref(it->second);
+  return std::nullopt;
 }
 
 inline AdjacencyContainer<std::list<std::pair<int, typename Edge<int>::Weight>>,

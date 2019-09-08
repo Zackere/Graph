@@ -48,8 +48,10 @@ class AdjacencyContainer<
   bool insert(int key, typename Edge<int>::Weight value);
   bool remove(int key);
   bool exist(int key) const;
-  typename Edge<int>::Weight const& operator[](int key) const;
-  typename Edge<int>::Weight& operator[](int key);
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
+  operator[](int key) const;
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight>> operator[](
+      int key);
   Iterator begin();
   Iterator end();
 
@@ -116,23 +118,25 @@ inline bool AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::exist(
 }
 
 template <typename MapType>
-inline typename Edge<int>::Weight const&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
     AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::operator[](
         int key) const {
-  return std::find_if(map_.begin(), map_.end(),
-                      [key](auto const& pair) { return pair.first == key; })
-      ->second;
+  auto it = std::find_if(map_.cbegin(), map_.cend(),
+                         [key](auto const& pair) { return pair.first == key; });
+  if (it != map_.end())
+    return std::ref(it->second);
+  return std::nullopt;
 }
 
 template <typename MapType>
-typename Edge<int>::Weight&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight>>
     AdjacencyContainer<MapType, int, EnableIfIsMap<MapType>>::operator[](
         int key) {
-  return const_cast<Edge<int>::Weight&>(
-      static_cast<AdjacencyContainer<
-          MapType, int,
-          typename std::enable_if<IsMapType<MapType>::value>::type> const&>(
-          *this)[key]);
+  auto it = std::find_if(map_.begin(), map_.end(),
+                         [key](auto const& pair) { return pair.first == key; });
+  if (it != map_.end())
+    return std::ref(it->second);
+  return std::nullopt;
 }
 
 template <typename MapType>

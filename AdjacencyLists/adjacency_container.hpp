@@ -3,7 +3,9 @@
 #ifndef ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 #define ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 
+#include <functional>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -27,8 +29,10 @@ class AdjacencyContainer {
   bool insert(Vertex key, typename Edge<Vertex>::Weight value);
   bool remove(Vertex key);
   bool exist(Vertex key) const;
-  typename Edge<Vertex>::Weight const& operator[](Vertex key) const;
-  typename Edge<Vertex>::Weight& operator[](Vertex key);
+  std::optional<std::reference_wrapper<typename Edge<Vertex>::Weight const>>
+  operator[](Vertex key) const;
+  std::optional<std::reference_wrapper<typename Edge<Vertex>::Weight>>
+  operator[](Vertex key);
   Iterator begin() const;
   Iterator end() const;
 };

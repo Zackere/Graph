@@ -85,6 +85,47 @@ inline bool Graph<Container>::remove_edge(vertex from, vertex to) {
   return adjacency_container_[from].remove(to);
 }
 
+template <typename Container>
+inline std::optional<typename Edge<typename Graph<Container>::vertex>::Weight>
+Graph<Container>::get_edge_weight(vertex from, vertex to) const {
+  return adjacency_container_[from][to];
+}
+
+template <typename Container>
+inline unsigned int Graph<Container>::in_degree(vertex v) const {
+  unsigned int in_deg = 0;
+  for (auto const& container : adjacency_container_)
+    if (container.exist(v))
+      ++in_deg;
+  return in_deg;
+}
+
+template <typename Container>
+inline unsigned int Graph<Container>::out_degree(vertex v) const {
+  return adjacency_container_[v].size();
+}
+
+template <typename Container>
+inline bool Graph<Container>::modify_edge_weight(
+    vertex from,
+    vertex to,
+    typename Edge<vertex>::Weight add) {
+  if (!adjacency_container_[from][to].has_value())
+    return false;
+  adjacency_container_[from][to].value() += add;
+  return true;
+}
+
+template <typename Container>
+inline std::vector<Edge<typename Graph<Container>::vertex>> Graph<Container>::out_edges(
+    vertex from) const {
+  std::vector<Edge<vertex>> ret;
+  ret.reserve(out_degree(from));
+  for (auto const& elem : adjacency_container_[from])
+    ret.emplace_back(Edge<vertex>{from, elem.first, elem.second});
+  return ret;
+}
+
 }  // namespace Graphlib
 
 #endif  // GRAPHS_GRAPH_HPP_

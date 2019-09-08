@@ -41,8 +41,10 @@ class AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
   bool insert(int key, typename Edge<int>::Weight value);
   bool remove(int key);
   bool exist(int key) const;
-  typename Edge<int>::Weight const& operator[](int key) const;
-  typename Edge<int>::Weight& operator[](int key);
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
+  operator[](int key) const;
+  std::optional<std::reference_wrapper<typename Edge<int>::Weight>> operator[](
+      int key);
   Iterator begin();
   Iterator end();
 
@@ -59,7 +61,7 @@ using AdjacencyVector =
 inline AdjacencyContainer<
     std::vector<std::optional<typename Edge<int>::Weight>>,
     int>::AdjacencyContainer(std::size_t size)
-    : vector_(size) {}
+    : vector_(size, std::nullopt) {}
 
 inline std::size_t
 AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
@@ -93,21 +95,20 @@ AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
   return InRange(key) && vector_[key].has_value();
 }
 
-inline typename Edge<int>::Weight const&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight const>>
     AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
                        int>::operator[](int key) const {
-  return vector_[key].value();
+  if (vector_[key].has_value())
+    return std::ref(vector_[key].value());
+  return std::nullopt;
 }
 
-inline typename Edge<int>::Weight&
+std::optional<std::reference_wrapper<typename Edge<int>::Weight>>
     AdjacencyContainer<std::vector<std::optional<typename Edge<int>::Weight>>,
                        int>::operator[](int key) {
-  return const_cast<typename Edge<int>::Weight&>(
-      static_cast<AdjacencyContainer<
-          std::vector<std::optional<typename Edge<int>::Weight>>, int> const&>(
-          *this)
-          .
-          operator[](key));
+  if (vector_[key].has_value())
+    return std::ref(vector_[key].value());
+  return std::nullopt;
 }
 
 inline AdjacencyContainer<

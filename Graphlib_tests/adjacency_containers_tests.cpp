@@ -68,6 +68,8 @@ TYPED_TEST(ContructorTestFixture, ResultOK) {
     ASSERT_NO_THROW(p = std::make_unique<TypeParam>(elem));
     ASSERT_NE(p, nullptr);
     EXPECT_EQ(p->size(), 0u);
+    for (int i = 0; i < elem; i++)
+      EXPECT_FALSE((*p)[i].has_value());
   }
 }
 
@@ -94,8 +96,9 @@ TYPED_TEST(InsertRemoveTestFixture, InsertTestOK) {
       EXPECT_TRUE(p->insert(elem.first, elem.second));
       EXPECT_TRUE(p->exist(elem.first));
       EXPECT_FALSE(p->insert(elem.first, elem.second));
-      EXPECT_EQ((*p)[elem.first], elem.second);
-      EXPECT_EQ(const_cast<TypeParam&>(*p)[elem.first], elem.second);
+      ASSERT_TRUE((*p)[elem.first].has_value());
+      EXPECT_EQ((*p)[elem.first].value(), elem.second);
+      EXPECT_EQ(const_cast<TypeParam&>(*p)[elem.first].value(), elem.second);
       EXPECT_EQ(p->size(), ++inserted_elems);
     }
   }
