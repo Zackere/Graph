@@ -9,7 +9,7 @@
 #include <optional>
 #include <utility>
 
-#include "../edge.hpp"
+#include "../Graphs/edge.hpp"
 #include "adjacency_container.hpp"
 
 namespace Graphlib {

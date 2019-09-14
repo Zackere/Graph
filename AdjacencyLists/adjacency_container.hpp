@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "../edge.hpp"
+#include "../Graphs/edge.hpp"
 
 namespace Graphlib {
 template <typename Container, typename Vertex, typename Enable = void>

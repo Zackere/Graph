@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "../AdjacencyLists/adjacency_container.hpp"
-#include "../edge.hpp"
+#include "edge.hpp"
 
 namespace Graphlib {
 template <typename Container>
@@ -72,7 +72,7 @@ template <typename Container>
 inline bool Graph<Container>::add_edge(vertex from,
                                        vertex to,
                                        typename Edge<vertex>::Weight weight) {
-  return adjacency_container_[from].Insert(to, weight);
+  return adjacency_container_[from].insert(to, weight);
 }
 
 template <typename Container>
@@ -117,8 +117,8 @@ inline bool Graph<Container>::modify_edge_weight(
 }
 
 template <typename Container>
-inline std::vector<Edge<typename Graph<Container>::vertex>> Graph<Container>::out_edges(
-    vertex from) const {
+inline std::vector<Edge<typename Graph<Container>::vertex>>
+Graph<Container>::out_edges(vertex from) const {
   std::vector<Edge<vertex>> ret;
   ret.reserve(out_degree(from));
   for (auto const& elem : adjacency_container_[from])

@@ -1,7 +1,7 @@
 // Copyright 2019 Wojciech Replin
 
-#ifndef EDGE_HPP_
-#define EDGE_HPP_
+#ifndef GRAPHS_EDGE_HPP_
+#define GRAPHS_EDGE_HPP_
 
 template <typename T>
 struct Edge {
@@ -11,4 +11,4 @@ struct Edge {
   Weight weight;
 };
 
-#endif  // EDGE_HPP_
+#endif  // GRAPHS_EDGE_HPP_
