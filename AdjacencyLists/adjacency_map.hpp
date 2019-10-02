@@ -1,5 +1,4 @@
-// Copyright 2019 Wojciech Replinstd::unordered_map<int, typename
-// Edge<int>::Weight>
+// Copyright 2019 Wojciech Replin
 
 #ifndef ADJACENCYLISTS_ADJACENCY_MAP_HPP_
 #define ADJACENCYLISTS_ADJACENCY_MAP_HPP_
