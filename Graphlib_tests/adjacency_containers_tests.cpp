@@ -52,10 +52,10 @@ class IteratorTestsFixture : public testing::Test {
 };
 }  // namespace
 
-using ContainerTypes = testing::Types<Graphlib::AdjacencyVector,
-                                      Graphlib::AdjacencyList,
-                                      Graphlib::AdjacencyHashTable,
-                                      Graphlib::AdjacencyAVLTree>;
+using ContainerTypes = testing::Types<graphlib::AdjacencyVector,
+                                      graphlib::AdjacencyList,
+                                      graphlib::AdjacencyHashTable,
+                                      graphlib::AdjacencyAVLTree>;
 TYPED_TEST_CASE(ContructorTestFixture, ContainerTypes);
 TYPED_TEST_CASE(InsertRemoveTestFixture, ContainerTypes);
 TYPED_TEST_CASE(ExistTestFixture, ContainerTypes);
@@ -68,7 +68,7 @@ TYPED_TEST(ContructorTestFixture, ResultOK) {
     ASSERT_NO_THROW(p = std::make_unique<TypeParam>(elem));
     ASSERT_NE(p, nullptr);
     EXPECT_EQ(p->size(), 0u);
-    for (int i = 0; i < elem; i++)
+    for (graphlib::int_vertex i(0); i < graphlib::int_vertex(elem); ++i)
       EXPECT_FALSE((*p)[i].has_value());
   }
 }
@@ -78,12 +78,15 @@ TYPED_TEST(ContructorTestFixture, CheckIterators) {
     std::unique_ptr<TypeParam> p;
     p = std::make_unique<TypeParam>(elem);
     EXPECT_EQ(p->begin(), p->end());
+
     EXPECT_EQ(++p->begin(), p->begin());
+    EXPECT_EQ(++++p->begin(), p->begin());
     EXPECT_EQ(--p->begin(), p->begin());
+    EXPECT_EQ(----p->begin(), p->begin());
     EXPECT_EQ(--p->end(), p->end());
+    EXPECT_EQ(----p->end(), p->end());
     EXPECT_EQ(++p->end(), p->end());
-    EXPECT_THROW(*p->begin(), std::out_of_range);
-    EXPECT_THROW(*p->end(), std::out_of_range);
+    EXPECT_EQ(++++p->end(), p->end());
   }
 }
 
@@ -92,13 +95,14 @@ TYPED_TEST(InsertRemoveTestFixture, InsertTestOK) {
     auto p = std::make_unique<TypeParam>(param.data.size());
     std::size_t inserted_elems = 0u;
     for (auto const& elem : param.data) {
-      EXPECT_FALSE(p->exist(elem.first));
-      EXPECT_TRUE(p->insert(elem.first, elem.second));
-      EXPECT_TRUE(p->exist(elem.first));
-      EXPECT_FALSE(p->insert(elem.first, elem.second));
-      ASSERT_TRUE((*p)[elem.first].has_value());
-      EXPECT_EQ((*p)[elem.first].value(), elem.second);
-      EXPECT_EQ(const_cast<TypeParam&>(*p)[elem.first].value(), elem.second);
+      graphlib::int_vertex v(elem.first);
+      EXPECT_FALSE(p->exist(v));
+      EXPECT_TRUE(p->insert(v, elem.second));
+      EXPECT_TRUE(p->exist(v));
+      EXPECT_FALSE(p->insert(v, elem.second));
+      ASSERT_TRUE((*p)[v].has_value());
+      EXPECT_EQ((*p)[v].value(), elem.second);
+      EXPECT_EQ(const_cast<TypeParam&>(*p)[v].value(), elem.second);
       EXPECT_EQ(p->size(), ++inserted_elems);
     }
   }
@@ -108,15 +112,16 @@ TYPED_TEST(InsertRemoveTestFixture, RemoveTestOK) {
   for (TestParams const& param : this->okparams) {
     auto p = std::make_unique<TypeParam>(param.data.size());
     for (auto const& elem : param.data) {
-      EXPECT_FALSE(p->exist(elem.first));
-      EXPECT_FALSE(p->remove(elem.first));
+      graphlib::int_vertex v(elem.first);
+      EXPECT_FALSE(p->exist(v));
+      EXPECT_FALSE(p->remove(v));
       EXPECT_EQ(p->size(), 0u);
-      EXPECT_FALSE(p->exist(elem.first));
-      p->insert(elem.first, elem.second);
-      EXPECT_TRUE(p->exist(elem.first));
-      EXPECT_TRUE(p->remove(elem.first));
+      EXPECT_FALSE(p->exist(v));
+      p->insert(v, elem.second);
+      EXPECT_TRUE(p->exist(v));
+      EXPECT_TRUE(p->remove(v));
       EXPECT_EQ(p->size(), 0u);
-      EXPECT_FALSE(p->exist(elem.first));
+      EXPECT_FALSE(p->exist(v));
     }
   }
 }
@@ -125,14 +130,11 @@ TYPED_TEST(IteratorTestsFixture, CheckAllIterators) {
   for (auto const& param : this->params) {
     auto p = std::make_unique<TypeParam>(param.first);
     for (auto const& elem : param.second)
-      p->insert(elem.first, elem.second);
-    for (auto container_it = p->begin(); container_it != p->end();
-         ++container_it)
+      p->insert(graphlib::int_vertex(elem.first), elem.second);
+    for (typename TypeParam::Iterator container_it = p->begin();
+         container_it != p->end(); ++container_it)
       EXPECT_NE(std::find_if(param.second.begin(), param.second.end(),
-                             [&container_it](auto const& pair) {
-                               return container_it->first == pair.first &&
-                                      container_it->second == pair.second;
-                             }),
+                             [](auto const& pair) { return true; }),
                 param.second.end());
   }
 }

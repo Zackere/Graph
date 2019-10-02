@@ -3,7 +3,6 @@
 #ifndef ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 #define ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
 
-#include <functional>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -11,7 +10,7 @@
 
 #include "../Graphs/edge.hpp"
 
-namespace Graphlib {
+namespace graphlib {
 template <typename Container, typename Vertex, typename Enable = void>
 class AdjacencyContainer {
  public:
@@ -36,5 +35,5 @@ class AdjacencyContainer {
   Iterator begin() const;
   Iterator end() const;
 };
-}  // namespace Graphlib
+}  // namespace graphlib
 #endif  // ADJACENCYLISTS_ADJACENCY_CONTAINER_HPP_
